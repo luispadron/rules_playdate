@@ -1,0 +1,4 @@
+exports_files([
+    "BUILD.bazel.tpl",
+    "playdate_toolchain.bzl.tpl",
+])

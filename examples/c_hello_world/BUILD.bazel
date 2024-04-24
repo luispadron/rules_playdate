@@ -1,0 +1,18 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+load("//playdate:playdate.bzl", "playdate_application")
+
+cc_library(
+    name = "c_hello_world_lib",
+    srcs = ["main.c"],
+    deps = ["//playdate/lib/c:c_playdate"],
+)
+
+cc_shared_library(
+    name = "c_hello_world_shared_lib",
+    deps = [":c_hello_world_lib"],
+)
+
+playdate_application(
+    name = "c_hello_world",
+    library = ":c_hello_world_shared_lib",
+)

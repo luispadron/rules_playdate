@@ -1,0 +1,50 @@
+"""Defines the rules_playdate module."""
+
+module(
+    name = "rules_playdate",
+    version = "0.0.0",
+    bazel_compatibility = [
+        ">=6.0.0",
+    ],
+    compatibility_level = 1,
+)
+
+# -- Dependencies --
+
+bazel_dep(
+    name = "platforms",
+    version = "0.0.9",
+)
+
+bazel_dep(
+    name = "apple_support",
+    version = "1.15.1",
+    dev_dependency = True,
+)
+
+# TODO(fix): rules_cc must be loaded after apple_support to avoid toolchain resolution issues.
+bazel_dep(
+    name = "rules_cc",
+    version = "0.0.9",
+)
+
+bazel_dep(
+    name = "rules_swift",
+    version = "1.18.0",
+    dev_dependency = True,
+)
+bazel_dep(
+    name = "rules_apple",
+    version = "3.5.1",
+    dev_dependency = True,
+)
+
+# -- Extensions --
+
+playdate_sdk_extension = use_extension("//playdate:playdate_sdk.bzl", "playdate_sdk")
+playdate_sdk_extension.register(version = "2.4.2")
+use_repo(playdate_sdk_extension, "playdate_sdk")
+
+register_toolchains(
+    "@playdate_sdk//toolchain:playdate_macos_toolchain",
+)

@@ -1,0 +1,45 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        config: [debug, release]
+        playdate_sdk_version: ["2.4.2"]
+        swift_toolchain_version: ["swift-DEVELOPMENT-SNAPSHOT-2024-04-13-a"]
+      fail-fast: false
+    steps:
+      - name: 🌐 Checkout repository
+        uses: actions/checkout@v4
+      - name: 📦 Installing Playdate SDK
+        run: |
+          curl -L -sS --show-error --fail https://download.panic.com/playdate_sdk/PlaydateSDK-${{ matrix.playdate_sdk_version }}.zip -o PlaydateSDK.zip
+          unzip PlaydateSDK.zip
+          sudo installer -store -pkg "PlaydateSDK.pkg" -target /
+      - name: 🏎️ Installing Swift toolchain
+        id: setup-swift
+        uses: SwiftyLab/setup-swift@v1
+        with:
+          swift-version: "https://download.swift.org/development/xcode/${{ matrix.swift_toolchain_version }}/${{ matrix.swift_toolchain_version }}-osx.pkg"
+      - name: 🍃 Setting up Bazel
+        run: |
+          echo "common --announce_rc" >> user.bazelrc
+          echo "common --action_env=TOOLCHAINS=${{ env.TOOLCHAINS }}" >> user.bazelrc
+          echo -e "Wrote user.bazelrc:\n$(cat user.bazelrc)"
+      - name: 🏗️ Bazel build all
+        run: |
+          bazel build \
+            //... \
+            --config=${{ matrix.config }}
+
+
+
+
+

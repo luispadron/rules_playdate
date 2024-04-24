@@ -1,0 +1,14 @@
+load("@rules_cc//cc:defs.bzl", "cc_library")
+
+cc_library(
+    name = "c_playdate",
+    srcs = ["cplaydate.c"],
+    hdrs = [
+        "include/cplaydate.apinotes",  # NOTE: not a header but we need this here so its copied to the same location as the modulemap
+        "include/cplaydate.h",
+        "include/module.modulemap",  # NOTE: we need a custom modulemap to control the location so the apinotes are found next to it
+    ],
+    includes = ["include"],
+    visibility = ["//visibility:public"],
+    deps = ["@playdate_sdk//:pd_api"],
+)

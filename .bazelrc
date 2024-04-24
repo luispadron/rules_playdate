@@ -1,0 +1,32 @@
+# Enable minimum OS version for macOS.
+common --macos_minimum_os=14.0
+common --host_macos_minimum_os=14.0
+
+# Better error messages.
+common --sandbox_debug
+common --verbose_failures
+
+# Enable sandboxing
+common --spawn_strategy=sandboxed
+common --strategy=SignBinary=sandboxed,standalone
+
+# Enable embedded binary support.
+# More info: https://github.com/apple/swift/blob/main/docs/EmbeddedSwift/EmbeddedSwiftStatus.md
+common --@rules_swift//swift:copt=-enable-experimental-feature
+common --@rules_swift//swift:copt=Embedded
+# Enable whole module optimization (required for embedded binaries).
+common --@rules_swift//swift:copt=-wmo
+
+# Create the debug configuration (enabled by default)
+common:debug --compilation_mode=dbg
+common --config=debug
+
+# Create the release configuration
+common:release --compilation_mode=opt
+# - Optimize Swift builds for size.
+common:release --@rules_swift//swift:copt=-Osize
+
+# Keep going on build failures to get all info.
+common --keep_going
+
+try-import %workspace%/user.bazelrc

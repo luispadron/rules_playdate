@@ -1,0 +1,4 @@
+module cplaydate [system] {
+  umbrella header "cplaydate.h"
+  export *
+}
